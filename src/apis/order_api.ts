@@ -172,6 +172,23 @@ export class OrderAPI {
     }
 
     /**
+     * Throws with error message if a given order is not able to be filled.
+     *
+     * @param {DebtOrder} debtOrder
+     * @returns {Promise<void>}
+     */
+    public async assertValidAsync(debtOrder: DebtOrder): Promise<void> {
+        const {
+            debtKernel,
+            debtToken,
+            tokenTransferProxy,
+        } = await this.contracts.loadDharmaContractsAsync();
+
+        await this.assertValidityInvariantsAsync(debtOrder, debtKernel, debtToken);
+        await this.assertValidLoanTerms(debtOrder);
+    }
+
+    /**
      * Asynchronously cancel a debt order if it has yet to be fulfilled.
      *
      * @param  debtOrder the debt order to be canceled.
